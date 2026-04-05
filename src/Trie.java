@@ -98,12 +98,24 @@ public class Trie {
     public String getNextWord() {
         List<String> possibleWords = getPossibleWords(root, 0,5);
         cleanup(possibleWords);
-        
+
         if (possibleWords.isEmpty()) {
             return null;
         }
+
+        List<Integer> weights = getWeightedPrefixSum(possibleWords);
+
         Random random = new Random();
-        return possibleWords.get(random.nextInt(possibleWords.size()));
+        int randomWeight = random.nextInt(weights.get(weights.size() - 1)) + 1; // Random weight between 1 and total weight
+        
+        int selectedIndex = 0;
+        for (int i = 0; i < weights.size(); i++) {
+            if (randomWeight <= weights.get(i)) {
+                selectedIndex = i;
+                break;
+            }
+        }
+        return possibleWords.get(selectedIndex);
     }
     
     /**
@@ -260,6 +272,33 @@ public class Trie {
         }
         
         return false;
+    }
+
+    private List<Integer> getWeightedPrefixSum(List<String> possibleWords) {
+        List<Integer> weights = new ArrayList<>();
+        int previousWeight = 0;
+
+        for (String word : possibleWords) {
+            int weight = 1; // Base weight for each word
+            for (int i = 0; i < word.length(); i++) {
+                char c = word.charAt(i);
+                if (greenCharacters.containsKey(i) && greenCharacters.get(i) == c) {
+                    continue;
+                }
+
+                for (List<Character> orangeChars : orangeCharacters.values()) {
+                    if (orangeChars.contains(c)) {
+                        weight += 5; // Increase weight for orange characters
+                        break;
+                    }
+                }
+            }
+            weight += previousWeight;
+            weights.add(weight);
+            previousWeight = weight;
+        }
+
+        return weights;
     }
 
 }

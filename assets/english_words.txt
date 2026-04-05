@@ -49,7 +49,6 @@ added
 adder
 addie
 addle
-adela
 adele
 adept
 adieu
@@ -837,7 +836,6 @@ cards
 cared
 cares
 caret
-carey
 cargo
 carib
 carla
@@ -976,7 +974,6 @@ clang
 clank
 clans
 claps
-clara
 clare
 clark
 clash
@@ -2056,7 +2053,6 @@ garbo
 garbs
 garry
 garth
-garza
 gases
 gasps
 gassy
@@ -3851,7 +3847,6 @@ pepsi
 pepys
 perch
 percy
-perez
 peril
 perks
 perky
