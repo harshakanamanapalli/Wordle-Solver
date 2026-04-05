@@ -200,7 +200,6 @@ anise
 anita
 ankhs
 ankle
-annam
 annex
 annie
 annoy
@@ -1630,7 +1629,6 @@ ember
 emcee
 emend
 emery
-emile
 emily
 emirs
 emits
@@ -1831,7 +1829,6 @@ finis
 finks
 finns
 finny
-fiona
 fiord
 fired
 fires
@@ -3288,7 +3285,6 @@ menes
 mensa
 menus
 meows
-merak
 merck
 mercy
 meres
@@ -3454,7 +3450,6 @@ mumps
 munch
 mungs
 munoz
-munro
 mural
 murks
 murky
@@ -5977,7 +5972,6 @@ zelig
 zelma
 zeros
 zests
-ziggy
 zilch
 zincs
 zings
@@ -5994,3 +5988,5 @@ zorro
 zosma
 zukor
 zulus
+
+

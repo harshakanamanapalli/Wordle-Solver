@@ -3,45 +3,61 @@ import java.util.*;
 
 public class WordleSolver {
     public static void main(String[] args) {
+        boolean useStringToInputState = true;
+        if (args.length > 0 && args[0].equalsIgnoreCase("1")) {
+            useStringToInputState = false;
+        }
+
         // Instantiate and load the Trie
         Trie trie = new Trie();
         trie.loadFromFile("assets/english_words.txt");
-        
+
         Scanner scanner = new Scanner(System.in);
         List<String> invalidWords = new ArrayList<>();
-        
+
         // Loop for 6 steps
         for (int step = 1; step <= 6; step++) {
             System.out.println("\n--- Step " + step + " ---");
-            
+
             // Get the next word from the trie
             String word = trie.getNextWord(step >= 5); // Use almost final strategy in the last 2 steps.
             if (word == null) {
                 System.out.println("No possible words found!");
                 break;
             }
-            
+
             System.out.println("Current word: " + word);
-            
-            // For each character, ask the user for input (1=GREEN, 2=ORANGE, 3=GREY, 9=INVALID WORD)
+
+            // For each character, ask the user for input (1=GREEN, 2=ORANGE, 3=GREY,
+            // 9=INVALID WORD)
             List<WordleCharacter> wordleCharacters = new ArrayList<>();
             boolean invalidWord = false;
-            
+
+            String inputState = getInputState(scanner, useStringToInputState, word.length());
+
             for (int i = 0; i < word.length(); i++) {
                 char c = word.charAt(i);
-                System.out.print("Enter state for '" + c + "' at position " + i + " (1=GREEN, 2=ORANGE, 3=GREY, 9=INVALID WORD): ");
-                int state = scanner.nextInt();
-                
+                int state;
+
+                if (useStringToInputState) {
+                    state = (inputState.charAt(i) - '0'); // Convert char to int
+                } else {
+                    System.out.print("Enter state for '" + c + "' at position " + i
+                            + " (1=GREEN, 2=ORANGE, 3=GREY, 9=INVALID WORD): ");
+                    state = scanner.nextInt();
+                }
+
                 if (state == 9) {
                     // Mark the entire word as invalid
                     invalidWord = true;
                     invalidWords.add(word);
                     trie.deleteWord(word);
-                    System.out.println("Word '" + word + "' marked as invalid and deleted from Trie. Restarting step...");
+                    System.out
+                            .println("Word '" + word + "' marked as invalid and deleted from Trie. Restarting step...");
                     step--; // Restart this step
                     break;
                 }
-                
+
                 WordleCharacter.State charState;
                 switch (state) {
                     case 1:
@@ -57,17 +73,17 @@ public class WordleSolver {
                         System.out.println("Invalid input. Assuming UNSET.");
                         charState = WordleCharacter.State.UNSET;
                 }
-                
+
                 wordleCharacters.add(new WordleCharacter(c, charState));
             }
-            
+
             if (invalidWord) {
                 continue; // Skip to next iteration (which restarts the same step)
             }
-            
+
             // Construct a WordleWord
             WordleWord wordleWord = new WordleWord(wordleCharacters);
-            
+
             // Check if the wordle is solved
             if (wordleWord.isSolved()) {
                 System.out.println("YAYY!!!");
@@ -75,16 +91,16 @@ public class WordleSolver {
                 scanner.close();
                 return;
             }
-            
+
             // Update the trie data structures
             trie.updateWithWordleFeedback(wordleWord);
         }
-        
+
         // If not solved after 5 steps, ask the user for the solution
         System.out.print("\nEnter the solution word: ");
         scanner.nextLine(); // Consume the newline
         String solution = scanner.nextLine().trim().toLowerCase();
-        
+
         // Search for the solution in the trie
         if (!trie.search(solution)) {
             // If it doesn't exist, append it to the english_words.txt file
@@ -95,11 +111,32 @@ public class WordleSolver {
                 e.printStackTrace();
             }
         }
-        
+
         deleteInvalidWordsFromFile(invalidWords);
         scanner.close();
     }
-    
+
+    private static String getInputState(Scanner scanner, boolean usesStringInputState, int wordLength) {
+        if (!usesStringInputState) {
+            return ""; // Not using string input state
+        }
+
+        String inputState = "";
+        while (true) {
+            System.out.print(
+                    "Enter the state for the entire word as a string (e.g., '12333' for GREEN, ORANGE, GREY, GREY, GREY): ");
+            inputState = scanner.nextLine().trim();
+            if (inputState.length() == wordLength) {
+                break;
+            }
+            if (inputState.equals("9")) {
+                break;
+            }
+        }
+
+        return inputState;
+    }
+
     /**
      * Deletes invalid words from the english_words.txt file
      */
@@ -107,10 +144,10 @@ public class WordleSolver {
         if (invalidWords.isEmpty()) {
             return;
         }
-        
+
         String filePath = "assets/english_words.txt";
         Set<String> invalidWordSet = new HashSet<>(invalidWords);
-        
+
         try {
             // Read all lines from the file
             List<String> lines = new ArrayList<>();
@@ -124,15 +161,16 @@ public class WordleSolver {
                     }
                 }
             }
-            
+
             // Write all remaining lines back to the file
             try (PrintWriter writer = new PrintWriter(new FileWriter(filePath))) {
                 for (String line : lines) {
                     writer.println(line);
                 }
             }
-            
-            System.out.println("Successfully deleted " + invalidWords.size() + " invalid word(s) from english_words.txt");
+
+            System.out
+                    .println("Successfully deleted " + invalidWords.size() + " invalid word(s) from english_words.txt");
         } catch (IOException e) {
             System.err.println("Error deleting invalid words from file: " + e.getMessage());
             e.printStackTrace();
