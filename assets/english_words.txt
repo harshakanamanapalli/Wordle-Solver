@@ -286,7 +286,6 @@ aster
 astir
 aston
 astor
-aswan
 atari
 atlas
 atman
@@ -476,7 +475,6 @@ bents
 beret
 bergs
 beria
-berle
 berms
 berne
 berra

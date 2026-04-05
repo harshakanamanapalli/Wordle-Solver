@@ -95,8 +95,8 @@ public class Trie {
     /**
      * Returns the next word to guess in the Wordle solver
      */
-    public String getNextWord() {
-        List<String> possibleWords = getPossibleWords(root, 0,5);
+    public String getNextWord(boolean isAlmostFinal) {
+        List<String> possibleWords = getPossibleWords(root, 0,5, isAlmostFinal);
         cleanup(possibleWords);
 
         if (possibleWords.isEmpty()) {
@@ -121,21 +121,21 @@ public class Trie {
     /**
      * Recursively builds a list of possible words based on the current state of green, grey, and orange characters
      */
-    private List<String> getPossibleWords(TrieNode node, int index, int length) {
+    private List<String> getPossibleWords(TrieNode node, int index, int length, boolean isAlmostFinal) {
         List<String> possibleWords = new ArrayList<>();
         if (index == length) {
             possibleWords.add("");
             return possibleWords;
         }
 
-        if (greenCharacters.containsKey(index)) {
+        if (isAlmostFinal && greenCharacters.containsKey(index)) {
             char c = greenCharacters.get(index);
 
             if (!node.children.containsKey(c)) {
                 return possibleWords; // No possible words if the green character is not found
             }
 
-            List<String> subWords = getPossibleWords(node.children.get(c), index + 1, length);
+            List<String> subWords = getPossibleWords(node.children.get(c), index + 1, length, isAlmostFinal);
             for (String subWord : subWords) {
                 possibleWords.add(c + subWord);
             }
@@ -144,8 +144,8 @@ public class Trie {
         
 
         for (char c : node.children.keySet()) {
-            if (greyCharacters.contains(c)) {
-                continue; // Skip if this character is grey
+            if (greyCharacters.contains(c) && !greenCharacters.containsValue(c) && !orangeCharacters.values().stream().anyMatch(list -> list.contains(c))) {
+                continue; // Skip if this character is grey and is not already accounted for as green or orange.
             }
 
             if (orangeCharacters.containsKey(index) && orangeCharacters.get(index).contains(c)) {
@@ -153,7 +153,7 @@ public class Trie {
             }
 
             
-            List<String> subWords = getPossibleWords(node.children.get(c), index + 1, length);
+            List<String> subWords = getPossibleWords(node.children.get(c), index + 1, length, isAlmostFinal);
             for (String subWord : subWords) {
                 possibleWords.add(c + subWord);
             }    

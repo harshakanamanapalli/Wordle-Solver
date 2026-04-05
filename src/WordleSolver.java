@@ -15,7 +15,7 @@ public class WordleSolver {
             System.out.println("\n--- Step " + step + " ---");
             
             // Get the next word from the trie
-            String word = trie.getNextWord();
+            String word = trie.getNextWord(step >= 5); // Use almost final strategy in the last 2 steps.
             if (word == null) {
                 System.out.println("No possible words found!");
                 break;
