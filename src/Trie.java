@@ -178,5 +178,27 @@ public class Trie {
     public HashMap<Integer, List<Character>> getOrangeCharacters() {
         return orangeCharacters;
     }
+    
+    /**
+     * Updates the Trie data structures based on the WordleWord feedback
+     */
+    public void updateWithWordleFeedback(WordleWord wordleWord) {
+        List<WordleCharacter> characters = wordleWord.getCharacters();
+        
+        for (int i = 0; i < characters.size(); i++) {
+            WordleCharacter wc = characters.get(i);
+            char letter = wc.getLetter();
+            WordleCharacter.State state = wc.getState();
+            
+            if (state == WordleCharacter.State.GREEN) {
+                greenCharacters.put(i, letter);
+            } else if (state == WordleCharacter.State.GREY) {
+                greyCharacters.add(letter);
+            } else if (state == WordleCharacter.State.ORANGE) {
+                orangeCharacters.putIfAbsent(i, new ArrayList<>());
+                orangeCharacters.get(i).add(letter);
+            }
+        }
+    }
 
 }
