@@ -64,7 +64,7 @@ public class Trie {
             String word;
             while ((word = reader.readLine()) != null) {
                 word = word.trim().toLowerCase();
-                if (!word.isEmpty()) {
+                if (!word.isEmpty() && word.length() == 5) {
                     insert(word);
                 }
             }
@@ -97,7 +97,8 @@ public class Trie {
      */
     public String getNextWord() {
         List<String> possibleWords = getPossibleWords(root, 0,5);
-        cleanupOrangeMismatches(possibleWords);
+        cleanup(possibleWords);
+        
         if (possibleWords.isEmpty()) {
             return null;
         }
@@ -109,7 +110,6 @@ public class Trie {
      * Recursively builds a list of possible words based on the current state of green, grey, and orange characters
      */
     private List<String> getPossibleWords(TrieNode node, int index, int length) {
-    
         List<String> possibleWords = new ArrayList<>();
         if (index == length) {
             possibleWords.add("");
@@ -118,6 +118,11 @@ public class Trie {
 
         if (greenCharacters.containsKey(index)) {
             char c = greenCharacters.get(index);
+
+            if (!node.children.containsKey(c)) {
+                return possibleWords; // No possible words if the green character is not found
+            }
+
             List<String> subWords = getPossibleWords(node.children.get(c), index + 1, length);
             for (String subWord : subWords) {
                 possibleWords.add(c + subWord);
@@ -143,6 +148,24 @@ public class Trie {
         }
         
         return possibleWords;
+    }
+
+    private void cleanup(List<String> possibleWords) {
+        cleanupNon5LetterWords(possibleWords);
+        cleanupOrangeMismatches(possibleWords);
+    }
+
+    /**
+     * Removes any words that are not 5 letters long from the possible words list
+     */
+    private void cleanupNon5LetterWords(List<String> possibleWords) {
+        Iterator<String> iterator = possibleWords.iterator();
+        while (iterator.hasNext()) {
+            String word = iterator.next();
+            if (word.length() != 5) {
+                iterator.remove();
+            }
+        }
     }
 
     /**

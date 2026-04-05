@@ -8,7 +8,6 @@ abate
 abbas
 abbey
 abbot
-abbé
 abdul
 abeam
 abets
@@ -93,7 +92,6 @@ agnew
 agony
 agree
 ahead
-ahmad
 ahmed
 aided
 aides
@@ -108,7 +106,6 @@ aisle
 akbar
 akita
 akiva
-akkad
 akron
 alamo
 alana
@@ -721,7 +718,6 @@ brush
 brusk
 brute
 bryan
-bryce
 bryon
 buber
 bucks
@@ -2342,7 +2338,6 @@ hangs
 hanks
 hanky
 hanna
-hanoi
 happy
 hardy
 hared
@@ -2877,7 +2872,6 @@ laden
 lades
 ladle
 lager
-lagos
 lairs
 laity
 laius
@@ -3468,7 +3462,6 @@ mungs
 munoz
 munro
 mural
-murat
 murks
 murky
 mused
@@ -5930,7 +5923,6 @@ wuhan
 wyatt
 wyeth
 wylie
-xcvii
 xenia
 xenon
 xerox
@@ -5938,13 +5930,6 @@ xhosa
 xingu
 xrefs
 xterm
-xviii
-xxiii
-xxvii
-xxxii
-xxxiv
-xxxix
-xxxvi
 xylem
 yacht
 yacks
@@ -6016,4 +6001,3 @@ zorro
 zosma
 zukor
 zulus
-élan
