@@ -14,4 +14,13 @@ public class WordleWord {
     public void setCharacters(List<WordleCharacter> characters) {
         this.characters = characters;
     }
+
+    public boolean isSolved() {
+        for (WordleCharacter character : characters) {
+            if (character.getState() != WordleCharacter.State.GREEN) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
