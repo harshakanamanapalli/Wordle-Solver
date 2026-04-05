@@ -2,6 +2,8 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TrieTest {
     private Trie trie;
@@ -32,5 +34,36 @@ public class TrieTest {
     public void testNonexistentWords() {
         assertFalse("3-letter non-word 'xyz' should not be found", trie.search("xyz"));
         assertFalse("Non-existent word should not be found", trie.search("nonexistent"));
+    }
+    
+    @Test
+    public void testGetNextWordWithEmptyCharacterMaps() {
+        String nextWord = trie.getNextWord();
+        assertNotNull("getNextWord should return a non-null word", nextWord);
+        assertTrue("getNextWord should return a 5-letter word", nextWord.length() == 5);
+    }
+    
+    @Test
+    public void testGetNextWordWithPopulatedCharacterMaps() {
+        // Populate greenCharacters with some characters
+        trie.getGreenCharacters().put(0, 'h');
+        trie.getGreenCharacters().put(4, 'o');
+        
+        // Populate greyCharacters with some characters
+        trie.getGreyCharacters().add('x');
+        trie.getGreyCharacters().add('q');
+        
+        // Populate orangeCharacters with some characters at specific positions
+        List<Character> orangeAtPos1 = new ArrayList<>();
+        orangeAtPos1.add('e');
+        trie.getOrangeCharacters().put(1, orangeAtPos1);
+        
+        List<Character> orangeAtPos3 = new ArrayList<>();
+        orangeAtPos3.add('l');
+        trie.getOrangeCharacters().put(3, orangeAtPos3);
+        
+        String nextWord = trie.getNextWord();
+        assertNotNull("getNextWord should return a non-null word with populated maps", nextWord);
+        assertTrue("getNextWord should return a 5-letter word", nextWord.length() == 5);
     }
 }
