@@ -6,14 +6,14 @@ public class Trie {
     private HashMap<Integer, Character> greenCharacters;
     private HashSet<Character> greyCharacters;
     private HashMap<Integer, List<Character>> orangeCharacters;
-    
+
     public Trie() {
         root = new TrieNode();
         greenCharacters = new HashMap<>();
         greyCharacters = new HashSet<>();
         orangeCharacters = new HashMap<>();
     }
-    
+
     /**
      * Inserts a word into the trie
      */
@@ -21,7 +21,7 @@ public class Trie {
         if (word == null || word.isEmpty()) {
             return;
         }
-        
+
         TrieNode current = root;
         for (char c : word.toCharArray()) {
             current.children.putIfAbsent(c, new TrieNode());
@@ -29,7 +29,7 @@ public class Trie {
         }
         current.isEndOfWord = true;
     }
-    
+
     /**
      * Searches for a word in the trie
      */
@@ -37,11 +37,11 @@ public class Trie {
         if (word == null || word.isEmpty()) {
             return false;
         }
-        
+
         TrieNode node = findNode(word);
         return node != null && node.isEndOfWord;
     }
-    
+
     /**
      * Finds the node corresponding to a word prefix
      */
@@ -55,7 +55,7 @@ public class Trie {
         }
         return current;
     }
-    
+
     /**
      * Loads all words from a file into the trie
      */
@@ -73,14 +73,14 @@ public class Trie {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Returns the total number of words in the trie
      */
     public int size() {
         return countWords(root);
     }
-    
+
     private int countWords(TrieNode node) {
         int count = 0;
         if (node.isEndOfWord) {
@@ -91,12 +91,12 @@ public class Trie {
         }
         return count;
     }
-    
+
     /**
      * Returns the next word to guess in the Wordle solver
      */
     public String getNextWord(boolean isAlmostFinal) {
-        List<String> possibleWords = getPossibleWords(root, 0,5, isAlmostFinal);
+        List<String> possibleWords = getPossibleWords(root, 0, 5, isAlmostFinal);
         cleanup(possibleWords);
 
         if (possibleWords.isEmpty()) {
@@ -106,8 +106,9 @@ public class Trie {
         List<Integer> weights = getWeightedPrefixSum(possibleWords);
 
         Random random = new Random();
-        int randomWeight = random.nextInt(weights.get(weights.size() - 1)) + 1; // Random weight between 1 and total weight
-        
+        int randomWeight = random.nextInt(weights.get(weights.size() - 1)) + 1; // Random weight between 1 and total
+                                                                                // weight
+
         int selectedIndex = 0;
         for (int i = 0; i < weights.size(); i++) {
             if (randomWeight <= weights.get(i)) {
@@ -117,9 +118,10 @@ public class Trie {
         }
         return possibleWords.get(selectedIndex);
     }
-    
+
     /**
-     * Recursively builds a list of possible words based on the current state of green, grey, and orange characters
+     * Recursively builds a list of possible words based on the current state of
+     * green, grey, and orange characters
      */
     private List<String> getPossibleWords(TrieNode node, int index, int length, boolean isAlmostFinal) {
         List<String> possibleWords = new ArrayList<>();
@@ -141,24 +143,24 @@ public class Trie {
             }
             return possibleWords; // If it's green, we must use it, so we can return immediately
         }
-        
 
         for (char c : node.children.keySet()) {
-            if (greyCharacters.contains(c) && !greenCharacters.containsValue(c) && !orangeCharacters.values().stream().anyMatch(list -> list.contains(c))) {
-                continue; // Skip if this character is grey and is not already accounted for as green or orange.
+            if (greyCharacters.contains(c) && !greenCharacters.containsValue(c)
+                    && !orangeCharacters.values().stream().anyMatch(list -> list.contains(c))) {
+                continue; // Skip if this character is grey and is not already accounted for as green or
+                          // orange.
             }
 
             if (orangeCharacters.containsKey(index) && orangeCharacters.get(index).contains(c)) {
                 continue; // Skip if this character is orange at this position
             }
 
-            
             List<String> subWords = getPossibleWords(node.children.get(c), index + 1, length, isAlmostFinal);
             for (String subWord : subWords) {
                 possibleWords.add(c + subWord);
-            }    
+            }
         }
-        
+
         return possibleWords;
     }
 
@@ -181,7 +183,8 @@ public class Trie {
     }
 
     /**
-     * Removes any words from the possible words list that contain orange characters in the wrong positions
+     * Removes any words from the possible words list that contain orange characters
+     * in the wrong positions
      */
     private void cleanupOrangeMismatches(List<String> possibleWords) {
         Iterator<String> iterator = possibleWords.iterator();
@@ -190,6 +193,11 @@ public class Trie {
             boolean remove = false;
             for (Map.Entry<Integer, List<Character>> entry : orangeCharacters.entrySet()) {
                 int pos = entry.getKey();
+
+                if (greenCharacters.containsKey(pos) && greenCharacters.get(pos) == word.charAt(pos)) {
+                    continue; // Skip if this position is already green and matches the character
+                }
+
                 List<Character> chars = entry.getValue();
                 if (pos < word.length() && chars.contains(word.charAt(pos))) {
                     remove = true;
@@ -201,30 +209,30 @@ public class Trie {
             }
         }
     }
-    
+
     public HashMap<Integer, Character> getGreenCharacters() {
         return greenCharacters;
     }
-    
+
     public HashSet<Character> getGreyCharacters() {
         return greyCharacters;
     }
-    
+
     public HashMap<Integer, List<Character>> getOrangeCharacters() {
         return orangeCharacters;
     }
-    
+
     /**
      * Updates the Trie data structures based on the WordleWord feedback
      */
     public void updateWithWordleFeedback(WordleWord wordleWord) {
         List<WordleCharacter> characters = wordleWord.getCharacters();
-        
+
         for (int i = 0; i < characters.size(); i++) {
             WordleCharacter wc = characters.get(i);
             char letter = wc.getLetter();
             WordleCharacter.State state = wc.getState();
-            
+
             if (state == WordleCharacter.State.GREEN) {
                 greenCharacters.put(i, letter);
             } else if (state == WordleCharacter.State.GREY) {
@@ -235,7 +243,7 @@ public class Trie {
             }
         }
     }
-    
+
     /**
      * Deletes a word from the trie
      */
@@ -245,7 +253,7 @@ public class Trie {
         }
         deleteWordHelper(root, word, 0);
     }
-    
+
     /**
      * Helper method to recursively delete a word from the trie
      */
@@ -257,20 +265,20 @@ public class Trie {
             node.isEndOfWord = false; // Mark as not end of word
             return node.children.isEmpty(); // Return true if node has no children
         }
-        
+
         char c = word.charAt(index);
         TrieNode childNode = node.children.get(c);
         if (childNode == null) {
             return false; // Word doesn't exist
         }
-        
+
         boolean shouldDeleteChild = deleteWordHelper(childNode, word, index + 1);
-        
+
         if (shouldDeleteChild) {
             node.children.remove(c);
             return node.children.isEmpty() && !node.isEndOfWord;
         }
-        
+
         return false;
     }
 
