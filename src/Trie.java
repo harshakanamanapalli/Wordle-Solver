@@ -200,5 +200,43 @@ public class Trie {
             }
         }
     }
+    
+    /**
+     * Deletes a word from the trie
+     */
+    public void deleteWord(String word) {
+        if (word == null || word.isEmpty()) {
+            return;
+        }
+        deleteWordHelper(root, word, 0);
+    }
+    
+    /**
+     * Helper method to recursively delete a word from the trie
+     */
+    private boolean deleteWordHelper(TrieNode node, String word, int index) {
+        if (index == word.length()) {
+            if (!node.isEndOfWord) {
+                return false; // Word doesn't exist
+            }
+            node.isEndOfWord = false; // Mark as not end of word
+            return node.children.isEmpty(); // Return true if node has no children
+        }
+        
+        char c = word.charAt(index);
+        TrieNode childNode = node.children.get(c);
+        if (childNode == null) {
+            return false; // Word doesn't exist
+        }
+        
+        boolean shouldDeleteChild = deleteWordHelper(childNode, word, index + 1);
+        
+        if (shouldDeleteChild) {
+            node.children.remove(c);
+            return node.children.isEmpty() && !node.isEndOfWord;
+        }
+        
+        return false;
+    }
 
 }
